@@ -1,33 +1,22 @@
 extern crate clap;
 
-use clap::{App, Arg};
-use std::process::Command;
+use clap::App;
 use std::ffi::OsStr;
+use std::process::Command;
 
 fn main() {
-    let app = App::new("GitPush")
+    App::new("GitPush")
         .version("1.0")
         .author("Ztory <Ztory@foxmail.com>")
         .about("Auto upload current local branch to all remote repository")
-        .usage("gp push")
-        .arg(Arg::with_name("push")
-            .help("Do it")
-            .empty_values(true)
-        );
-    let matches = app.get_matches();
+        .usage("gp");
 
-    if match matches.value_of("push") {
-        Some(r) => r,
-        None => ""
-    } == "" {
-        return;
-    }
     let repos_str = get_repos();
     let repos = no_empty_str_arr(&repos_str);
     let branch = get_current_branch();
     for repo in repos {
         let str = push(&repo, &branch);
-        println!("{}",str);
+        println!("{}", str);
     }
 }
 
@@ -41,11 +30,11 @@ fn get_repos() -> String {
 }
 
 fn run<I, S>(cmd: S, args: I) -> String
-    where
-        I: IntoIterator<Item=S>,
-        I: std::fmt::Debug,
-        S: AsRef<OsStr>,
-        S: std::fmt::Debug
+where
+    I: IntoIterator<Item = S>,
+    I: std::fmt::Debug,
+    S: AsRef<OsStr>,
+    S: std::fmt::Debug,
 {
     let output = Command::new(cmd)
         .args(args)
@@ -62,7 +51,9 @@ fn push(repo: &str, branch: &str) -> String {
 }
 
 fn no_empty_str_arr(str1: &String) -> Vec<&str> {
-    str1
-        .split("\n").collect::<Vec<&str>>()
-        .into_iter().filter(|b| *b != "").collect::<Vec<&str>>()
+    str1.split("\n")
+        .collect::<Vec<&str>>()
+        .into_iter()
+        .filter(|b| *b != "")
+        .collect::<Vec<&str>>()
 }
